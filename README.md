@@ -15,6 +15,7 @@ For more information on these inputs, see the [API Documentation](https://develo
 - `body`: Text describing the contents of the release
 - `draft`: `true` to create a draft (unpublished) release, `false` to create a published one. Default: `false`
 - `prerelease`: `true` to identify the release as a prerelease. `false` to identify the release as a full release. Default `false`
+- `allow_duplicate`: `true` to use older tag if the same tag name is found, `false` otherwise. Default: `false`
 
 ### Outputs
 For more information on these outputs, see the [API Documentation](https://developer.github.com/v3/repos/releases/#response-4) for an example of what these outputs look like

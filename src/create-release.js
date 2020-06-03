@@ -18,7 +18,25 @@ async function run() {
     const body = core.getInput('body', { required: false });
     const draft = core.getInput('draft', { required: false }) === 'true';
     const prerelease = core.getInput('prerelease', { required: false }) === 'true';
-
+    const allow_duplicate = core.getInput('allow_duplicate', { required: false });
+    try {
+      const releaseResponse = await github.repos.getReleaseByTag({
+        owner,
+        repo,
+        tag,
+      });
+      if (releaseResponse.status === 200) {
+        if (allow_duplicate) {
+          core.setOutput('id', String(releaseResponse.data.id));
+          core.setOutput('html_url', releaseResponse.data.html_url);
+          core.setOutput('upload_url', releaseResponse.data.upload_url);
+          return;
+        }
+        core.setFailed('Duplicate tag');
+      }
+    } catch (error) {
+      core.setFailed(error.message);
+    }
     // Create a release
     // API Documentation: https://developer.github.com/v3/repos/releases/#create-a-release
     // Octokit Documentation: https://octokit.github.io/rest.js/#octokit-routes-repos-create-release
