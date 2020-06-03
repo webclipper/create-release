@@ -8816,7 +8816,7 @@ async function run() {
         core.setFailed('Duplicate tag');
       }
     } catch (error) {
-      core.setFailed(error.message);
+      core.debug(`Old release not found. Message: ${error.message}`);
     }
     // Create a release
     // API Documentation: https://developer.github.com/v3/repos/releases/#create-a-release
