@@ -8799,15 +8799,15 @@ async function run() {
     const body = core.getInput('body', { required: false });
     const draft = core.getInput('draft', { required: false }) === 'true';
     const prerelease = core.getInput('prerelease', { required: false }) === 'true';
-    const allow_duplicate = core.getInput('allow_duplicate', { required: false });
+    const allowDuplicate = core.getInput('allow_duplicate', { required: false });
     try {
       const releaseResponse = await github.repos.getReleaseByTag({
         owner,
         repo,
-        tag,
+        tag
       });
       if (releaseResponse.status === 200) {
-        if (allow_duplicate) {
+        if (allowDuplicate) {
           core.setOutput('id', String(releaseResponse.data.id));
           core.setOutput('html_url', releaseResponse.data.html_url);
           core.setOutput('upload_url', releaseResponse.data.upload_url);
