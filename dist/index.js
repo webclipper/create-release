@@ -8799,7 +8799,7 @@ async function run() {
     const body = core.getInput('body', { required: false });
     const draft = core.getInput('draft', { required: false }) === 'true';
     const prerelease = core.getInput('prerelease', { required: false }) === 'true';
-    const allowDuplicate = core.getInput('allow_duplicate', { required: false });
+    const allowDuplicate = core.getInput('allow_duplicate', { required: false }) === 'true';
     try {
       const releaseResponse = await github.repos.getReleaseByTag({
         owner,
@@ -8814,6 +8814,7 @@ async function run() {
           return;
         }
         core.setFailed('Duplicate tag');
+        return;
       }
     } catch (error) {
       core.debug(`Old release not found. Message: ${error.message}`);
