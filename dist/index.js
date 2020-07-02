@@ -8801,6 +8801,7 @@ async function run() {
     const prerelease = core.getInput('prerelease', { required: false }) === 'true';
     const allowDuplicate = core.getInput('allow_duplicate', { required: false }) === 'true';
     const replaceOldTag = core.getInput('replace_old_tag', { required: false }) === 'true';
+    console.log('xx', replaceOldTag);
     try {
       const releaseResponse = await github.repos.getReleaseByTag({
         owner,
@@ -8809,11 +8810,12 @@ async function run() {
       });
       if (releaseResponse.status === 200) {
         if (replaceOldTag) {
-          await github.repos.deleteRelease({
+          const wewe = await github.repos.deleteRelease({
             owner,
             repo,
             releaseId: releaseResponse.data.id
           });
+          console.log(wewe);
         } else {
           if (allowDuplicate) {
             core.setOutput('id', String(releaseResponse.data.id));
