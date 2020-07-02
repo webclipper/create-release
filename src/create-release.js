@@ -27,6 +27,8 @@ async function run() {
         repo,
         tag
       });
+      console.log(releaseResponse.status);
+      console.log(releaseResponse);
       if (releaseResponse.status === 200) {
         if (replaceOldTag) {
           const wewe = await github.repos.deleteRelease({
