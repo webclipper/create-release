@@ -8815,7 +8815,7 @@ async function run() {
           const wewe = await github.repos.deleteRelease({
             owner,
             repo,
-            releaseId: releaseResponse.data.id
+            release_id: releaseResponse.data.id
           });
           console.log(wewe);
         } else {
