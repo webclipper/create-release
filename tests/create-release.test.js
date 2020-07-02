@@ -268,7 +268,7 @@ describe('Create Release', () => {
 
     expect(deleteRelease).toHaveBeenCalledWith({
       owner: 'owner',
-      releaseId: 'exit_release_id',
+      release_id: 'exit_release_id',
       repo: 'repo'
     });
   });

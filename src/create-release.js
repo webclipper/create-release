@@ -31,7 +31,7 @@ async function run() {
           await github.repos.deleteRelease({
             owner,
             repo,
-            releaseId: releaseResponse.data.id
+            release_id: releaseResponse.data.id
           });
         } else {
           if (allowDuplicate) {
