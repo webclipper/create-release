@@ -9,6 +9,7 @@ const run = require('../src/create-release.js');
 describe('Create Release', () => {
   let createRelease;
   let getReleaseByTag;
+  let deleteRelease;
 
   beforeEach(() => {
     createRelease = jest.fn().mockReturnValueOnce({
@@ -23,6 +24,8 @@ describe('Create Release', () => {
       throw new Error('Not Found');
     });
 
+    deleteRelease = jest.fn();
+
     context.repo = {
       owner: 'owner',
       repo: 'repo'
@@ -30,6 +33,7 @@ describe('Create Release', () => {
 
     const github = {
       repos: {
+        deleteRelease,
         createRelease,
         getReleaseByTag
       }
@@ -241,5 +245,31 @@ describe('Create Release', () => {
     expect(core.setOutput).toHaveBeenNthCalledWith(1, 'id', 'exit_release_id');
     expect(core.setOutput).toHaveBeenNthCalledWith(2, 'html_url', 'exit_html_url');
     expect(core.setOutput).toHaveBeenNthCalledWith(3, 'upload_url', 'exit_upload_url');
+  });
+
+  test('Test replace_old_tag set true', async () => {
+    core.getInput = jest
+      .fn()
+      .mockReturnValueOnce('refs/tags/v1.0.0')
+      .mockReturnValueOnce('myRelease')
+      .mockReturnValueOnce('myBody')
+      .mockReturnValueOnce('false')
+      .mockReturnValueOnce('false')
+      .mockReturnValueOnce('true')
+      .mockReturnValueOnce('true');
+
+    getReleaseByTag.mockRestore();
+    getReleaseByTag.mockImplementation(() => ({
+      status: 200,
+      data: { id: 'exit_release_id', html_url: 'exit_html_url', upload_url: 'exit_upload_url' }
+    }));
+
+    await run();
+
+    expect(deleteRelease).toHaveBeenCalledWith({
+      owner: 'owner',
+      releaseId: 'exit_release_id',
+      repo: 'repo'
+    });
   });
 });

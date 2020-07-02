@@ -19,6 +19,7 @@ async function run() {
     const draft = core.getInput('draft', { required: false }) === 'true';
     const prerelease = core.getInput('prerelease', { required: false }) === 'true';
     const allowDuplicate = core.getInput('allow_duplicate', { required: false }) === 'true';
+    const replaceOldTag = core.getInput('replace_old_tag', { required: false }) === 'true';
     try {
       const releaseResponse = await github.repos.getReleaseByTag({
         owner,
@@ -26,14 +27,22 @@ async function run() {
         tag
       });
       if (releaseResponse.status === 200) {
-        if (allowDuplicate) {
-          core.setOutput('id', String(releaseResponse.data.id));
-          core.setOutput('html_url', releaseResponse.data.html_url);
-          core.setOutput('upload_url', releaseResponse.data.upload_url);
+        if (replaceOldTag) {
+          await github.repos.deleteRelease({
+            owner,
+            repo,
+            releaseId: releaseResponse.data.id
+          });
+        } else {
+          if (allowDuplicate) {
+            core.setOutput('id', String(releaseResponse.data.id));
+            core.setOutput('html_url', releaseResponse.data.html_url);
+            core.setOutput('upload_url', releaseResponse.data.upload_url);
+            return;
+          }
+          core.setFailed('Duplicate tag');
           return;
         }
-        core.setFailed('Duplicate tag');
-        return;
       }
     } catch (error) {
       core.debug(`Old release not found. Message: ${error.message}`);
@@ -50,7 +59,6 @@ async function run() {
       draft,
       prerelease
     });
-
     // Get the ID, html_url, and upload URL for the created Release from the response
     const {
       data: { id: releaseId, html_url: htmlUrl, upload_url: uploadUrl }
