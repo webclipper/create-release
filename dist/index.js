@@ -8830,6 +8830,7 @@ async function run() {
         }
       }
     } catch (error) {
+      console.log(error)
       core.debug(`Old release not found. Message: ${error.message}`);
     }
     // Create a release
